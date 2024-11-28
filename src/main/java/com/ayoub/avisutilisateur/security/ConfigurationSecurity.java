@@ -20,7 +20,9 @@ public class ConfigurationSecurity {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        authorize -> authorize.requestMatchers(POST,"/inscription").permitAll()
+                        authorize -> authorize
+                                .requestMatchers(POST,"inscription").permitAll()
+                                .requestMatchers(POST,"activation").permitAll()
                                 .anyRequest().authenticated()
                 ).build();
     }

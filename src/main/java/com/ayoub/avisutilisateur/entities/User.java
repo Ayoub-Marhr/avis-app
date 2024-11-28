@@ -23,12 +23,10 @@ public class User implements UserDetails {
     private int id;
     @Column(name = "password")
     private String password;
-
     private String username;
     private String email;
     private boolean active = false;
     @OneToOne(cascade = CascadeType.ALL)
-
     private Role role;
 
     @Override
