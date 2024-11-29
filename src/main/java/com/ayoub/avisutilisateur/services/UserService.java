@@ -6,6 +6,9 @@ import com.ayoub.avisutilisateur.entities.User;
 import com.ayoub.avisutilisateur.entities.Validation;
 import com.ayoub.avisutilisateur.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepo userRepo;
@@ -39,7 +42,7 @@ public class UserService {
         role.setRole(TypeRole.USER);
         user.setRole(role);
        User userCreer =  userRepo.save(user);
-       validationService.addValidation(user);
+       validationService.addValidation(userCreer);
     }
 
     public void activation(Map<String, String> activation) {
@@ -50,5 +53,11 @@ public class UserService {
         User user =this.userRepo.findById(validation.getUser().getId()).orElseThrow(()-> new RuntimeException("user not found"));
         user.setActive(true);
         userRepo.save(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+      return  this.userRepo.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("user not found"));
+
     }
 }
